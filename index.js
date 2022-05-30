@@ -36,7 +36,7 @@ function verifyJWT(req, res, next) {
     try {
       await client.connect();
       const serviceCollection = client.db('Manufacture').collection('services');
-      const bookingCollection = client.db('Manufacture').collection('bookings');
+      const cartCollection = client.db('Manufacture').collection('carts');
       const userCollection = client.db('Manufacture').collection('users');
   
       app.get('/service', async (req, res) => {
@@ -93,11 +93,11 @@ function verifyJWT(req, res, next) {
         const date = req.query.date;
           const services = await serviceCollection.find().toArray();
           const query = { date: date };
-        const bookings = await bookingCollection.find(query).toArray();
+        const carts = await cartCollection.find(query).toArray();
   
         services.forEach(service => {
-          const serviceBookings = bookings.filter(book => book.treatment === service.name);
-          const bookedSlots = serviceBookings.map(book => book.slot);
+          const servicecarts = carts.filter(book => book.treatment === service.name);
+          const bookedSlots = servicecarts.map(book => book.slot);
           const available = service.slots.filter(slot => !bookedSlots.includes(slot));
           service.slots = available;
         });
@@ -106,27 +106,27 @@ function verifyJWT(req, res, next) {
         res.send(services);
       })
 
-      app.get('/booking', verifyJWT, async (req, res) => {
+      app.get('/cart', verifyJWT, async (req, res) => {
         const patient = req.query.patient;
         const decodedEmail = req.decoded.email;
         if (patient === decodedEmail) {
           const query = { patient: patient };
-          const bookings = await bookingCollection.find(query).toArray();
-          return res.send(bookings);
+          const carts = await cartCollection.find(query).toArray();
+          return res.send(carts);
         }
         else {
           return res.status(403).send({ message: 'forbidden access' });
         }
       })
   
-      app.post('/booking', async (req, res) => {
-        const booking = req.body;
-        const query = { treatment: booking.treatment, date: booking.date, patient: booking.patient }
-        const exists = await bookingCollection.findOne(query);
+      app.post('/cart', async (req, res) => {
+        const cart = req.body;
+        const query = { treatment: cart.treatment, date: cart.date, patient: cart.patient }
+        const exists = await cartCollection.findOne(query);
         if (exists) {
-          return res.send({ success: false, booking: exists })
+          return res.send({ success: false, cart: exists })
         }
-        const result = await bookingCollection.insertOne(booking);
+        const result = await cartCollection.insertOne(cart);
         return res.send({ success: true, result });
       })
   
