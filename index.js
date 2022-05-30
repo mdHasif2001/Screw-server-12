@@ -93,6 +93,8 @@ function verifyJWT(req, res, next) {
         res.send({ result, token });
       })
   
+
+      // available 
       app.get('/available', async (req, res) => {
         const date = req.query.date;
           const services = await serviceCollection.find().toArray();
