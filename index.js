@@ -53,6 +53,7 @@ function verifyJWT(req, res, next) {
         res.send(users);
       });
   
+      // admin email
       app.get('/admin/:email', async(req, res) =>{
         const email = req.params.email;
         const user = await userCollection.findOne({email: email});
