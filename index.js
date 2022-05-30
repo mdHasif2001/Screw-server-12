@@ -47,6 +47,7 @@ function verifyJWT(req, res, next) {
         res.send(services);
       });
   
+      // User
       app.get('/user', verifyJWT, async (req, res) => {
         const users = await userCollection.find().toArray();
         res.send(users);
