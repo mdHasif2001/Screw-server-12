@@ -40,6 +40,7 @@ function verifyJWT(req, res, next) {
       const cartCollection = client.db('Manufacture').collection('carts');
       const userCollection = client.db('Manufacture').collection('users');
   
+      // service
       app.get('/service', async (req, res) => {
         const query = {};
         const cursor = serviceCollection.find(query);
